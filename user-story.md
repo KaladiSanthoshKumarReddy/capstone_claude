@@ -1,20 +1,25 @@
-# User Story — [Replace with your feature]
+# User Story — EPMCDMETST-55846
+
+## Summary
+[Enhancement] Export items list to CSV
 
 ## Story
-As a [user type], I want to [do something], so that [reason/value].
+As a task-management app user,
+I want to export my filtered items list to a CSV file,
+So that I can share it or analyze it outside the application.
 
-## Background / Context
-[Add any relevant background, screenshots, or stakeholder notes here]
+## Acceptance Criteria (from Jira)
+1. Dashboard provides an "Export CSV" action that exports only the currently filtered/search results (respecting status and search query).
+2. The CSV file includes headers and the following columns at minimum: id, title, description, status, created_at, updated_at.
+3. Export works for up to 1000 items and uses the authenticated user scope (no cross-user data leakage).
 
-## Acceptance Criteria (draft)
-- [ ] Given [...] When [...] Then [...]
-- [ ] Given [...] When [...] Then [...]
+## Technical Notes
+- **Frontend:** Add an Export CSV button on Dashboard; call export endpoint and trigger browser download.
+- **Backend:** Add `GET /api/items/export` endpoint that returns `text/csv`; reuse existing filtering logic; enforce `authMiddleware`.
+- **Tests:** Playwright E2E verifies export button triggers download and file contains expected headers/rows; Vitest unit test for CSV serialization.
 
 ## Links
-- Jira: [Optional: CAP-XX]
-- Confluence: [Optional: link to wiki page]
-- Design: [Optional: link to Figma]
-
----
-> **How to use:** Edit this file with your feature description, then ask Claude:
-> `"Run the SDLC pipeline for the feature in user-story.md"`
+- Jira: https://jiraeu.epam.com/browse/EPMCDMETST-55846
+- Reporter: Santhoshkumarreddy Kaladi
+- Priority: Low
+- Status: Open

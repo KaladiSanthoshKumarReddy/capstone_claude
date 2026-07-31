@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { NextFunction } from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import { initDb } from './db/init'
@@ -23,6 +23,11 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.get('/api/health', (_req, res) => {
   res.json({ success: true, data: { status: 'ok' } })
+})
+
+app.use((err: Error, _req: express.Request, res: express.Response, _next: NextFunction) => {
+  console.error(err)
+  res.status(500).json({ success: false, error: 'Internal server error' })
 })
 
 initDb().then(() => {

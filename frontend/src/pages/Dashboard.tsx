@@ -6,6 +6,7 @@ import ItemList from '../components/ItemList'
 import SearchBar from '../components/SearchBar'
 import StatusFilter from '../components/StatusFilter'
 import TagFilter from '../components/TagFilter'
+import ExportCsvButton from '../components/ExportCsvButton'
 import Pagination from '../components/Pagination'
 import { fetchItems, createItem, updateItem, deleteItem } from '../api/items'
 import type { Item, PaginationMeta, ItemStatus } from '../types'
@@ -111,6 +112,7 @@ export default function Dashboard() {
             options={tagOptions}
             onChange={v => updateParams({ tag: v, page: '' })}
           />
+          <ExportCsvButton search={search} status={status} />
         </div>
 
         {error && (
