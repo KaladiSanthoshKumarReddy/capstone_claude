@@ -27,3 +27,17 @@ export async function updateItem(id: number, patch: Partial<Pick<Item, 'title' |
 export async function deleteItem(id: number): Promise<void> {
   await client.delete(`/items/${id}`)
 }
+
+export async function exportItems(params: {
+  search?: string
+  status?: string
+}): Promise<Blob> {
+  const cleanParams: Record<string, string> = {}
+  if (params.search?.trim()) cleanParams.search = params.search.trim()
+  if (params.status && params.status !== 'all') cleanParams.status = params.status
+  const res = await client.get<Blob>('/items/export', {
+    params: cleanParams,
+    responseType: 'blob',
+  })
+  return res.data
+}

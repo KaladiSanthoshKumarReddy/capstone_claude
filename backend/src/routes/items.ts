@@ -25,6 +25,31 @@ const patchSchema = z.object({
   tags: tagsSchema,
 })
 
+function escapeCsvField(value: string | number | null): string {
+  const str = String(value ?? '')
+  const needsQuoting = str.includes(',') || str.includes('"') || str.includes('\r') || str.includes('\n')
+  if (needsQuoting) {
+    const escaped = str.replace(/"/g, '""')
+    if (/^[=+\-@]/.test(escaped)) {
+      return `"\t${escaped}"`
+    }
+    return `"${escaped}"`
+  }
+  if (/^[=+\-@]/.test(str)) {
+    return `"\t${str}"`
+  }
+  return str
+}
+
+function buildCsvRow(fields: (string | number | null)[]): string {
+  return fields.map(escapeCsvField).join(',')
+}
+
+const exportQuerySchema = z.object({
+  status: z.enum(['active', 'completed', 'archived', 'all']).optional(),
+  search: z.string().max(200).optional(),
+})
+
 function normalizeTags(tags?: string[]): string | null {
   if (!tags || tags.length === 0) return null
   const seen = new Set<string>()
@@ -34,6 +59,24 @@ function normalizeTags(tags?: string[]): string | null {
     if (t && !seen.has(t)) { seen.add(t); result.push(t) }
   }
   return result.length ? result.join(',') : null
+}
+
+function buildItemsWhereClause(
+  userId: number | null | undefined,
+  search: string | null,
+  status: string | null,
+): { whereSql: string; args: (string | number | null)[] } {
+  const whereClauses: string[] = ['user_id = ?']
+  const args: (string | number | null)[] = [userId ?? null]
+  if (search) {
+    whereClauses.push('(title LIKE ? OR description LIKE ?)')
+    args.push(`%${search}%`, `%${search}%`)
+  }
+  if (status && status !== 'all') {
+    whereClauses.push('status = ?')
+    args.push(status)
+  }
+  return { whereSql: `WHERE ${whereClauses.join(' AND ')}`, args }
 }
 
 router.get('/', async (req: AuthRequest, res: Response) => {
@@ -46,17 +89,10 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 
   const db = getDb()
 
-  const whereClauses: string[] = ['user_id = ?']
-  const args: (string | number | null)[] = [req.userId ?? null]
+  const { whereSql: baseWhere, args: baseArgs } = buildItemsWhereClause(req.userId, search, status)
+  const whereClauses = baseWhere.replace(/^WHERE /, '').split(' AND ')
+  const args: (string | number | null)[] = [...baseArgs]
 
-  if (search) {
-    whereClauses.push("(title LIKE ? OR description LIKE ?)")
-    args.push(`%${search}%`, `%${search}%`)
-  }
-  if (status && status !== 'all') {
-    whereClauses.push("status = ?")
-    args.push(status)
-  }
   if (tag) {
     const escapedTag = tag.replace(/[%_]/g, ch => `\\${ch}`)
     whereClauses.push("(',' || tags || ',') LIKE ? ESCAPE '\\'")
@@ -139,6 +175,48 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
     return res.status(404).json({ success: false, error: 'Item not found' })
   }
   return res.json({ success: true, data: { deleted: true } })
+})
+
+// IMPORTANT: must remain above any router.get('/:id', ...) route — see architecture.md ADR-03
+router.get('/export', async (req: AuthRequest, res: Response) => {
+  try {
+    const parsed = exportQuerySchema.safeParse(req.query)
+    if (!parsed.success) {
+      return res.status(400).json({ success: false, error: 'Invalid query parameters' })
+    }
+
+    const search = parsed.data.search?.trim() || null
+    const status = parsed.data.status === 'all' ? null : (parsed.data.status ?? null)
+
+    const { whereSql, args } = buildItemsWhereClause(req.userId, search, status)
+
+    const db = getDb()
+    const result = await db.execute({
+      sql: `SELECT id, title, description, status, created_at, updated_at FROM items ${whereSql} ORDER BY created_at DESC LIMIT 1000`,
+      args,
+    })
+
+    let csvString = 'id,title,description,status,created_at,updated_at'
+    for (const row of result.rows) {
+      const r = row as unknown as {
+        id: number | null
+        title: string | null
+        description: string | null
+        status: string | null
+        created_at: string | null
+        updated_at: string | null
+      }
+      csvString += '\n' + buildCsvRow([r.id, r.title, r.description, r.status, r.created_at, r.updated_at])
+    }
+
+    const date = new Date().toISOString().slice(0, 10)
+    res.setHeader('Content-Type', 'text/csv')
+    res.setHeader('Content-Disposition', `attachment; filename="items-export-${date}.csv"`)
+    return res.send(csvString)
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ success: false, error: 'Internal server error' })
+  }
 })
 
 export default router
