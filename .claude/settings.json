@@ -16,7 +16,46 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"const p=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); const f=p.tool_input?.file_path||''; if(f.endsWith('.env') && !f.endsWith('.env.example')) { console.log(JSON.stringify({decision:'block',reason:'Refusing to write .env — would expose secrets.'})); } else { console.log(JSON.stringify({decision:'allow'})); }\""
+            "command": "node -e \"const p=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); const f=p.tool_input?.file_path||''; if(f.endsWith('.env') && !f.endsWith('.env.example')) { console.log(JSON.stringify({decision:'block',reason:'Refusing to write .env — set secrets manually to avoid leaks.'})); } else { console.log(JSON.stringify({decision:'allow'})); }\""
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); const f=p.tool_input?.file_path||''; if(f.endsWith('.env') && !f.endsWith('.env.example')) { console.log(JSON.stringify({decision:'block',reason:'Refusing to edit .env — set secrets manually to avoid leaks.'})); } else { console.log(JSON.stringify({decision:'allow'})); }\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); const cmd=p.tool_input?.command||''; const dangerous=['DROP TABLE','DROP DATABASE','DELETE FROM','TRUNCATE','--force','reset --hard','push --force','push -f']; const found=dangerous.find(d=>cmd.toUpperCase().includes(d.toUpperCase())); if(found){ console.log(JSON.stringify({decision:'block',reason:'Blocked potentially destructive command containing: '+found+'. Run manually if intentional.'})); } else { console.log(JSON.stringify({decision:'allow'})); }\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const p=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); const f=p.tool_input?.file_path||''; const artifacts=['requirements.md','architecture.md','design-review.md','impl-plan.md','verification-report.md','CHANGELOG.md']; const written=artifacts.find(a=>f.endsWith(a)); if(written){ const stage={['requirements.md']:1,['architecture.md']:2,['design-review.md']:3,['impl-plan.md']:4,['verification-report.md']:7,['CHANGELOG.md']:8}[written]; const next=stage?stage+1:null; if(next&&next<=8){ console.error('[SDLC Gate] '+written+' written. Stage '+stage+' complete.'); console.error('[SDLC Gate] Type /sdlc-approve to advance to Stage '+next+', or /sdlc-reject to revise.'); } } process.exit(0);\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"process.exit(0);\""
           }
         ]
       }

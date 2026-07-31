@@ -14,10 +14,12 @@ The underlying application is a full-stack **Capstone Item Manager** (React + Ex
 4. [How to Run the App](#how-to-run-the-app)
 5. [The AI SDLC Pipeline](#the-ai-sdlc-pipeline)
 6. [Claude Code Agents — Detailed Guide](#claude-code-agents--detailed-guide)
-7. [Claude Workflow](#claude-workflow)
-8. [CLAUDE.md — The Project Brain](#claudemd--the-project-brain)
-9. [Settings & Hooks](#settings--hooks)
-10. [MCP Integrations](#mcp-integrations)
+7. [Skills — Slash Commands](#skills--slash-commands)
+8. [Instructions — Sub-directory CLAUDE.md Files](#instructions--sub-directory-claudemd-files)
+9. [Claude Workflow](#claude-workflow)
+10. [CLAUDE.md — The Project Brain](#claudemd--the-project-brain)
+11. [Settings & Hooks](#settings--hooks)
+12. [MCP Integrations](#mcp-integrations)
 11. [Environment Variables](#environment-variables)
 12. [Running Tests](#running-tests)
 13. [Copilot vs Claude — What Changed](#copilot-vs-claude--what-changed)
@@ -91,13 +93,22 @@ capstone-claude-sdlc/
 │   │   ├── sdlc-stage6-review.md
 │   │   ├── sdlc-stage7-verify.md
 │   │   └── sdlc-stage8-pr.md
-│   ├── settings.json               ← Hooks, permissions, MCP config
+│   ├── commands/                   ← Slash commands (skills) — /sdlc-*
+│   │   ├── sdlc-start.md           ← /sdlc-start
+│   │   ├── sdlc-approve.md         ← /sdlc-approve
+│   │   ├── sdlc-reject.md          ← /sdlc-reject
+│   │   ├── sdlc-status.md          ← /sdlc-status
+│   │   ├── sdlc-resume.md          ← /sdlc-resume
+│   │   ├── sdlc-stage1.md          ← /sdlc-stage1 ... /sdlc-stage8
+│   │   └── sdlc-stage[2-8].md
+│   ├── settings.json               ← Hooks (pre/post/stop), permissions, MCP servers
 │   └── workflows/
 │       └── sdlc-full-pipeline.js   ← Multi-agent workflow script
 │
 ├── CLAUDE.md                       ← Project-wide AI instructions (auto-loaded)
 │
 ├── backend/                        ← Express + TypeScript API
+│   ├── CLAUDE.md                   ← Backend instructions (auto-loaded by Claude Code)
 │   └── src/
 │       ├── index.ts                ← Express app entry
 │       ├── db/init.ts              ← SQLite init + migrations
@@ -108,6 +119,7 @@ capstone-claude-sdlc/
 │           └── debug.ts            ← Dev-only debug viewer
 │
 ├── frontend/                       ← React + TypeScript + Vite
+│   ├── CLAUDE.md                   ← Frontend instructions (auto-loaded by Claude Code)
 │   └── src/
 │       ├── api/                    ← Axios client + items API
 │       ├── components/             ← UI components
@@ -116,6 +128,7 @@ capstone-claude-sdlc/
 │       └── types/                  ← TypeScript interfaces
 │
 ├── tests/                          ← Playwright E2E tests
+│   ├── CLAUDE.md                   ← Test instructions (auto-loaded by Claude Code)
 │   ├── e2e/helpers/auth.ts         ← registerUser, loginViaApi helpers
 │   ├── e2e/pages/                  ← Page Object Models
 │   └── e2e/specs/                  ← Test spec files
@@ -560,6 +573,95 @@ tools:
 
 ---
 
+## Skills — Slash Commands
+
+Skills in Claude Code are **custom slash commands** stored in `.claude/commands/*.md`. They are the direct equivalent of `.github/skills/` in the GitHub Copilot version.
+
+Each file becomes a `/command-name` you can type in Claude Code. The filename (without `.md`) is the command name.
+
+### Available Slash Commands
+
+| Command | File | What it does |
+|---------|------|-------------|
+| `/sdlc-start` | `sdlc-start.md` | Start or resume the pipeline from the last completed stage |
+| `/sdlc-approve` | `sdlc-approve.md` | Approve the current gate and advance to the next stage |
+| `/sdlc-reject` | `sdlc-reject.md` | Reject the current stage and re-run it with feedback |
+| `/sdlc-status` | `sdlc-status.md` | Show a status table of all 8 stages (DONE / NEXT / PENDING) |
+| `/sdlc-resume` | `sdlc-resume.md` | Resume from wherever you left off (detects state automatically) |
+| `/sdlc-stage1` | `sdlc-stage1.md` | Run Stage 1 — Requirements directly |
+| `/sdlc-stage2` | `sdlc-stage2.md` | Run Stage 2 — Architecture directly |
+| `/sdlc-stage3` | `sdlc-stage3.md` | Run Stage 3 — Design Review directly |
+| `/sdlc-stage4` | `sdlc-stage4.md` | Run Stage 4 — Implementation Plan directly |
+| `/sdlc-stage5` | `sdlc-stage5.md` | Run Stage 5 — Implementation directly |
+| `/sdlc-stage6` | `sdlc-stage6.md` | Run Stage 6 — Code Review directly |
+| `/sdlc-stage7` | `sdlc-stage7.md` | Run Stage 7 — Verification directly |
+| `/sdlc-stage8` | `sdlc-stage8.md` | Run Stage 8 — PR & Release directly |
+
+### How to Use
+
+In Claude Code (terminal or IDE):
+```
+/sdlc-start          ← start the whole pipeline
+/sdlc-approve        ← approve the current gate
+/sdlc-reject your feedback here   ← reject and revise with your notes
+/sdlc-status         ← check where you are
+/sdlc-stage3         ← jump straight to design review
+```
+
+### Slash Command File Format
+
+```markdown
+---
+description: Brief description shown in command picker
+---
+
+Prompt text that gets sent to Claude when the command is invoked.
+```
+
+The `description` field appears in Claude Code's command picker (`/` autocomplete menu).
+
+---
+
+## Instructions — Sub-directory CLAUDE.md Files
+
+Sub-directory `CLAUDE.md` files are the Claude Code equivalent of `.github/instructions/` files in the Copilot version. They are **auto-loaded by Claude Code whenever you work on files in that directory**.
+
+### Instruction Files in This Project
+
+| File | Loaded when working on | Contains |
+|------|----------------------|---------|
+| `CLAUDE.md` (root) | Any file | Pipeline overview, all agents, coding rules |
+| `backend/CLAUDE.md` | `backend/**` | Express, SQLite, Zod, JWT, response shape |
+| `frontend/CLAUDE.md` | `frontend/**` | React, Axios client, Zustand, data-testid rules |
+| `tests/CLAUDE.md` | `tests/**` | Playwright selectors, Page Objects, AC labeling |
+
+### What Each Covers
+
+**`backend/CLAUDE.md`**
+- Stack: Express 4, SQLite via `@libsql/client`, Zod, JWT
+- File layout of `backend/src/`
+- `{ sql, args }` parameterized query format (never string concat)
+- Additive-only migration rules
+- Response shape: `{ success: true, data: T }` or `{ success: false, error: string }`
+- What NOT to change: DB init pattern, auth middleware, route prefixes
+
+**`frontend/CLAUDE.md`**
+- Stack: React 18, Vite, Tailwind, Zustand, Axios
+- File layout of `frontend/src/`
+- `data-testid` requirement on every interactive element (with naming patterns)
+- Tailwind-only rule (no inline styles, no CSS modules)
+- URL search params for Dashboard state
+- What NOT to change: Axios instance, auth store shape, `capstone_token` key
+
+**`tests/CLAUDE.md`**
+- Selector priority: `getByTestId` > `getByRole` > `getByLabel` (never CSS)
+- No `waitForTimeout()` rule
+- AC-ID test labeling format for Stage 7
+- Page Object patterns
+- Auth helper usage
+
+---
+
 ## Claude Workflow
 
 The `.claude/workflows/sdlc-full-pipeline.js` script orchestrates all 8 stages using the Claude Code Workflow engine.
@@ -631,7 +733,7 @@ Without `CLAUDE.md`, Claude Code would have no project context. With it, every c
 
 ## Settings & Hooks
 
-`.claude/settings.json` configures Claude Code's behavior for this project.
+`.claude/settings.json` is the equivalent of `.github/hooks/` in the Copilot version. It configures Claude Code's behavior: permissions, hooks (pre/post/stop), and MCP servers.
 
 ### Permissions (allow list)
 
@@ -650,29 +752,58 @@ Without `CLAUDE.md`, Claude Code would have no project context. With it, every c
 }
 ```
 
-These allow Claude Code to run git, npm, node, tsc, and gh commands without prompting for each one.
+These allow Claude Code to run git, npm, node, tsc, and gh commands without prompting each time.
 
 ### Hooks
 
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "..."
-          }
-        ]
-      }
-    ]
-  }
-}
+Hooks run shell commands before or after Claude uses a tool. Three hook types are configured:
+
+#### `PreToolUse` — Write (blocks .env writes)
+
+Fires before any `Write` tool call. Blocks writing to `.env` files (except `.env.example`):
+
+```
+Write to .env → BLOCKED: "Refusing to write .env — set secrets manually"
+Write to .env.example → allowed
+Write to any other file → allowed
 ```
 
-The `PreToolUse` hook on `Write` blocks any attempt to write to a `.env` file (except `.env.example`). This prevents accidental secret leaks.
+#### `PreToolUse` — Edit (blocks .env edits)
+
+Same protection for the `Edit` tool — prevents secrets from being edited into `.env`.
+
+#### `PreToolUse` — Bash (blocks destructive commands)
+
+Fires before any `Bash` tool call. Blocks commands containing:
+- `DROP TABLE`, `DROP DATABASE`, `DELETE FROM`, `TRUNCATE` (destructive SQL)
+- `reset --hard`, `push --force`, `push -f` (destructive git)
+
+```
+git reset --hard → BLOCKED: "Run manually if intentional"
+git push --force → BLOCKED
+npm run dev → allowed
+git commit → allowed
+```
+
+#### `PostToolUse` — Write (gate reminder)
+
+Fires after any `Write` tool call. When a pipeline artifact is written (e.g. `requirements.md`, `architecture.md`), prints a reminder to the console:
+
+```
+[SDLC Gate] requirements.md written. Stage 1 complete.
+[SDLC Gate] Type /sdlc-approve to advance to Stage 2, or /sdlc-reject to revise.
+```
+
+This is the Claude Code equivalent of the `.github/hooks/sdlc-gate.json` in the Copilot version.
+
+### Hook Event Summary
+
+| Hook type | Matcher | Purpose |
+|-----------|---------|---------|
+| PreToolUse | Write | Block .env file writes |
+| PreToolUse | Edit | Block .env file edits |
+| PreToolUse | Bash | Block destructive shell commands |
+| PostToolUse | Write | Remind about SDLC gate after artifact files are written |
 
 ### MCP Servers
 
@@ -821,13 +952,13 @@ This project is a direct port of `capstone-copilot-clean` from GitHub Copilot to
 | Component | GitHub Copilot (old) | Claude Code (this) |
 |-----------|---------------------|-------------------|
 | **Agent definitions** | `.github/agents/*.agent.md` | `.claude/agents/*.md` |
-| **Global instructions** | `.github/copilot-instructions.md` | `CLAUDE.md` |
-| **Stage instructions** | `.github/instructions/*.instructions.md` | Embedded in each agent file |
-| **Skills (quick routing)** | `.github/skills/*/SKILL.md` | Agent `description:` frontmatter |
-| **Hooks** | `.github/hooks/sdlc-gate.json` | `.claude/settings.json` hooks |
+| **Global instructions** | `.github/copilot-instructions.md` | `CLAUDE.md` (root) |
+| **Scoped instructions** | `.github/instructions/*.instructions.md` | `backend/CLAUDE.md`, `frontend/CLAUDE.md`, `tests/CLAUDE.md` |
+| **Skills / shortcuts** | `.github/skills/*/SKILL.md` | `.claude/commands/*.md` (slash commands) |
+| **Hooks** | `.github/hooks/sdlc-gate.json` | `.claude/settings.json` PreToolUse/PostToolUse/Stop hooks |
 | **MCP config** | `.vscode/mcp.json` | `.claude/settings.json` mcpServers |
 | **Multi-agent workflow** | Not supported natively | `.claude/workflows/sdlc-full-pipeline.js` |
-| **Invocation** | `@sdlc` in VS Code Copilot chat | `claude "run sdlc..."` in terminal |
+| **Invocation** | `@sdlc` in VS Code Copilot chat | `/sdlc-start` or `claude "run sdlc..."` |
 | **IDE coupling** | VS Code only | Terminal + any IDE |
 | **Parallel agents** | No (sequential only) | Yes (via Workflow engine) |
 | **Token-efficient routing** | SKILL.md files (250-token summaries) | Agent `description:` (one-liner) |
