@@ -1,0 +1,21 @@
+{
+  "name": "capstone-claude-sdlc",
+  "version": "1.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KaladiSanthoshKumarReddy/capstone_claude.git"
+  },
+  "scripts": {
+    "install:all": "cd frontend && npm install && cd ../backend && npm install && cd ../tests && npm install",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "build": "cd backend && npm run build && cd ../frontend && npm run build",
+    "test": "cd frontend && npm run test && cd ../tests && npx playwright test",
+    "test:report": "cd tests && npx playwright show-report",
+    "test:unit": "cd frontend && npm run test",
+    "test:e2e": "cd tests && npx playwright test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
