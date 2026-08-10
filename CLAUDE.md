@@ -115,9 +115,41 @@ All agents are in `.claude/agents/`. Each is a self-contained Markdown file with
 
 ---
 
+## `.claude/` Pipeline Structure
+
+The pipeline is driven entirely by Claude Code features under `.claude/`, organized in layers:
+
+| Layer | Location | Role |
+|-------|----------|------|
+| **Commands** | `.claude/commands/*.md` | Human entry points (`/sdlc-start`, `/sdlc-status`, `/sdlc-approve`, `/sdlc-reject`, `/sdlc-resume`, `/sdlc-stage1`…`/sdlc-stage8`) |
+| **Agents** | `.claude/agents/*.md` | Execute each stage; orchestrator routes + enforces gates |
+| **Skills** | `.claude/skills/<name>/SKILL.md` | Reusable gate criteria + core steps (orchestrator, gate-check, phase-1…8) |
+| **Instructions** | `.claude/instructions/*.md` | Deep how-to reference (global policy, gate checklist, phase-01…08; Phase 5 = full coding standards) |
+| **Prompts** | `.claude/prompts/*.prompt.md` | Reusable templates (gate-review, phase-execution, reject-rework-loop, resume-from-gate) |
+| **Hooks** | `.claude/settings.json` | SessionStart banner; PreToolUse blocks `.env`/destructive Bash; PostToolUse gate reminders |
+| **Templates** | `.claude/templates/sdlc-report-template.html` | HTML report filled by Stage 8 |
+| **Registry** | `.claude/SKILLS_REGISTRY.md` | Single-page map of the whole pipeline |
+
+Session state persists under `/memories/session/`: `sdlc-gate-state.md` (master), `phase-0N-state.md`
+(per stage), and `orchestrator-log.md` (transition log).
+
+### Capstone 8-Step Coverage
+
+| Capstone Step | Stage | Key guarantee added |
+|---------------|-------|---------------------|
+| 1 Requirements | 1 | Clarify-first questions before writing; ≥10 FR / ≥15 AC + traceability |
+| 2 Architecture | 2 | Component/sequence diagrams, DB diff, API contracts, ADRs |
+| 3 Design Review | 3 | 6-dimension adversarial audit, explicit APPROVED/REJECTED |
+| 4 Impl Planning | 4 | Dependency-ordered tasks + blocked-task flags |
+| 5 Implementation | 5 | Full coding standards, `tsc`-verified per task |
+| 6 Review | 6 | Exact 7-area checklist + safe auto-fixes |
+| 7 Verify | 7 | Real unit + E2E tests **and** output content-quality check |
+| 8 PR | 8 | PR body with Summary, Changes Made, Test Evidence, Known Limitations, Reviewer Checklist |
+
 ## Gate Validation Rules
 
-Each stage has objective PASS/FAIL criteria before the next stage may begin:
+Each stage has objective PASS/FAIL criteria before the next stage may begin
+(full detail in `.claude/instructions/gate-validation-checklist.md`):
 
 | Stage | Minimum Pass Criteria |
 |-------|----------------------|

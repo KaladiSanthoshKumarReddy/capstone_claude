@@ -103,4 +103,11 @@ Write `architecture.md` to the project root with this exact structure:
 - Preserve the existing API client pattern (`frontend/src/api/client.ts` interceptor).
 - Design for the current stack only — do not propose Redis, queues, or new frameworks.
 - If Stage 3 rejects this design, you will be re-invoked with the rejection feedback.
-- After writing `architecture.md`, print: "Stage 2 complete — architecture ready for design review."
+- After writing `architecture.md`, update `/memories/session/phase-02-state.md` and print: "Stage 2 complete — architecture ready for design review."
+
+## References
+
+- Skill: `.claude/skills/sdlc-phase-2-architecture/SKILL.md`
+- Detailed how-to: `.claude/instructions/phase-02-architecture.instructions.md`
+- Global policy: `.claude/instructions/sdlc-global.instructions.md`
+- Gate rule: `.claude/instructions/gate-validation-checklist.md` → Gate 2

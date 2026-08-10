@@ -21,6 +21,20 @@ You are an adversarial code reviewer. Your job is to find real bugs and security
 4. Read `architecture.md` for intended behavior.
 5. Glob all modified files in `backend/src/` and `frontend/src/`.
 
+## The 7 Review Areas (capstone checklist — evaluate every one)
+
+| # | Area | Review question |
+|---|------|-----------------|
+| 1 | Correctness | Does each component behave as specified in `requirements.md`? Are all ACs achievable? |
+| 2 | Security | Secrets excluded from output/logs? Input validated with Zod? Parameterized SQL? `authMiddleware` on protected routes? Per-user scoping? XSS-safe rendering? |
+| 3 | Error Handling | Are API failures, missing files, empty results, and 'Not Found' handled gracefully? |
+| 4 | Test Coverage | Will planned tests cover the happy path AND 'Not Found'/missing-field/empty edge cases? `data-testid` present? |
+| 5 | Code Clarity | Are function/variable names self-explanatory? Is logic followable without comments? |
+| 6 | DRY Principle | Any duplicated logic to refactor into a shared helper? |
+| 7 | Dependency Safety | Any new or known-vulnerable package versions? Every dependency justified by an ADR? |
+
+Map each finding below to one of these 7 areas.
+
 ## Review Dimensions
 
 ### CRITICAL (must fix before Stage 7)
@@ -93,3 +107,10 @@ Stage 6 verdict:
 - [ ] All missing `data-testid` attributes added (needed for Stage 7 Playwright tests)
 - [ ] No hardcoded secrets remain in any modified file
 - [ ] Print explicit verdict: PASS or BLOCKED
+
+## References
+
+- Skill: `.claude/skills/sdlc-phase-6-review/SKILL.md`
+- Detailed rubric: `.claude/instructions/phase-06-review.instructions.md`
+- Gate rule: `.claude/instructions/gate-validation-checklist.md` → Gate 6
+- After reporting, update `/memories/session/phase-06-state.md` and `/memories/session/sdlc-gate-state.md`.

@@ -18,4 +18,6 @@ Print a clear status table:
 | 1 | Requirements | ✅ DONE / ▶ NEXT / ⏳ PENDING |
 ...
 
-Then state what the next action is (e.g. "Run /sdlc-approve to advance to Stage 4").
+Then state the exact next action (e.g. "Run /sdlc-approve to advance to Stage 4", or "Design REJECTED — re-run Stage 2").
+
+Use the `sdlc-gate-check` skill (`.claude/skills/sdlc-gate-check/SKILL.md`) and the objective criteria in `.claude/instructions/gate-validation-checklist.md`. This command is READ-ONLY — do not run any stage.
