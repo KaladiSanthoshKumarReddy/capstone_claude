@@ -3,3 +3,5 @@ description: Run Stage 5 — Implementation (reads impl-plan.md, writes TypeScri
 ---
 
 Invoke the sdlc-stage5-implementation agent. Read impl-plan.md and execute each TASK-XX in dependency order. Write TypeScript to backend/src/ and frontend/src/ only — never touch tests/e2e/. Run tsc --noEmit after each task. After all tasks complete, print the Stage 5 gate message and STOP.
+
+See skill `.claude/skills/sdlc-phase-5-implementation/SKILL.md`, full coding standards `.claude/instructions/phase-05-implementation.instructions.md`, and Gate 5 in `.claude/instructions/gate-validation-checklist.md`.

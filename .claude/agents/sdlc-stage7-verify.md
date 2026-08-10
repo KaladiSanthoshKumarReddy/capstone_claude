@@ -77,6 +77,14 @@ Also run unit tests:
 cd frontend && npm run test 2>&1
 ```
 
+## Content-Quality Check (capstone Step 7 — verify the OUTPUT document, not just the code)
+
+Beyond "tests pass", inspect the feature's produced output/document for quality:
+- Correct headers/columns/format (e.g. CSV headers `id,title,description,status,created_at,updated_at`).
+- No secrets and no cross-user data leakage in the output.
+- Graceful edge behavior (empty export = headers only; commas/quotes/newlines escaped).
+Record concrete observations in a **Content Quality** section of the report.
+
 ## Output
 
 Write `verification-report.md` to the project root with **real results only**:
@@ -102,6 +110,9 @@ Duration: [actual duration from test output]
 | AC-01 | ... | items.spec.ts | "AC-01: ..." | PASS |
 ...
 
+## Content Quality
+[Observations from the content-quality check: format/headers correct, no leakage, edge cases handled]
+
 ## Gap Analysis
 [ACs not covered by any test — must be empty for Stage 7 to PASS]
 
@@ -121,3 +132,10 @@ FAIL — [N] ACs uncovered or [N] tests failing
 - [ ] No `page.waitForTimeout()` calls in any test
 - [ ] No fabricated counts, timings, or URLs
 - [ ] After writing report, print: "Stage 7 complete — verdict: [PASS/FAIL], [N]/[N] ACs covered"
+
+## References
+
+- Skill: `.claude/skills/sdlc-phase-7-verify/SKILL.md`
+- Detailed how-to: `.claude/instructions/phase-07-verify.instructions.md`
+- Gate rule: `.claude/instructions/gate-validation-checklist.md` → Gate 7
+- After reporting, update `/memories/session/phase-07-state.md` and `/memories/session/sdlc-gate-state.md`.

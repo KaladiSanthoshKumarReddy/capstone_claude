@@ -81,3 +81,11 @@ Tasks completed: N / N
 ```
 
 If any task was skipped or has issues, list them explicitly.
+
+## References
+
+- Skill: `.claude/skills/sdlc-phase-5-implementation/SKILL.md`
+- Full coding standards: `.claude/instructions/phase-05-implementation.instructions.md`
+- Global policy: `.claude/instructions/sdlc-global.instructions.md`
+- Gate rule: `.claude/instructions/gate-validation-checklist.md` → Gate 5
+- After finishing, update `/memories/session/phase-05-state.md` and `/memories/session/sdlc-gate-state.md`.

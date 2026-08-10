@@ -67,3 +67,11 @@ If `design-review.md` contains "REJECTED", automatically route back to Stage 2 (
 - OWASP Top 10 hygiene is mandatory.
 - Never fabricate test results, metrics, or pass/fail counts.
 - Stage 5 (implementation) must never modify files in `tests/e2e/` — that is Stage 7's domain.
+
+## References
+
+- Skill: `.claude/skills/sdlc-orchestrator/SKILL.md` and `.claude/skills/sdlc-gate-check/SKILL.md`
+- Global policy: `.claude/instructions/sdlc-global.instructions.md`
+- Gate rules: `.claude/instructions/gate-validation-checklist.md`
+- Registry (full map): `.claude/SKILLS_REGISTRY.md`
+- Maintain state in `/memories/session/sdlc-gate-state.md` and append transitions to `/memories/session/orchestrator-log.md`.

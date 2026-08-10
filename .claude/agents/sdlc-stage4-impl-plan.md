@@ -82,3 +82,11 @@ Write `impl-plan.md` to the project root:
 - [ ] DB migration tasks come before route tasks that depend on new columns
 - [ ] No task modifies `tests/e2e/**` — that belongs to Stage 7
 - [ ] After writing, print: "Stage 4 complete — [N] tasks planned."
+
+## References
+
+- Skill: `.claude/skills/sdlc-phase-4-impl-plan/SKILL.md`
+- Detailed how-to: `.claude/instructions/phase-04-impl-plan.instructions.md`
+- Global policy: `.claude/instructions/sdlc-global.instructions.md`
+- Gate rule: `.claude/instructions/gate-validation-checklist.md` → Gate 4
+- After writing, update `/memories/session/phase-04-state.md` and `/memories/session/sdlc-gate-state.md`.

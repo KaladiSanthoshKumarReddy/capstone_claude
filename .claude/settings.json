@@ -10,6 +10,16 @@
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const fs=require('fs');const has=f=>fs.existsSync(f);const stages=[['requirements.md',1],['architecture.md',2],['design-review.md',3],['impl-plan.md',4],['verification-report.md',7],['CHANGELOG.md',8]];let done=0;for(const [f] of stages){if(has(f))done++;}console.error('=== Capstone Item Manager — AI SDLC Pipeline ===');console.error('Artifacts present: '+stages.filter(s=>has(s[0])).map(s=>s[0]).join(', ' )||'(none yet)');console.error('Run /sdlc-status to see the gate table, or /sdlc-start to begin.');process.exit(0);\""
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Write",

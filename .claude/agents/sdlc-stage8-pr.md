@@ -85,13 +85,38 @@ Fill all values from actual artifacts. No placeholders, no "[TODO]".
 
 ## GitHub Pull Request
 
+The PR description MUST contain all five capstone-required sections, in this order: **Summary**,
+**Changes Made**, **Test Evidence**, **Known Limitations**, **Reviewer Checklist**.
+
 Run:
 ```bash
 gh pr create \
   --title "feat: [Feature Name]" \
   --body "$(cat <<'EOF'
 ## Summary
-[2-3 bullet points from CHANGELOG]
+[2-3 sentence overview of what was built and why]
+
+## Changes Made
+- `path/file` — [reason for the change]
+- ... (every file added/modified from git diff, each with a reason)
+
+## Test Evidence
+```
+[paste the real test-run output from verification-report.md]
+```
+- Playwright E2E: N/N passing
+- Vitest Unit: N/N passing
+- AC Coverage: N/N (100%)
+
+## Known Limitations
+- [Anything marked 'Not Found', assumptions made, or out-of-scope items]
+
+## Reviewer Checklist
+- [ ] Requirements met — all ACs satisfied
+- [ ] Security — no secrets, input validated, parameterized SQL, auth + per-user scope enforced
+- [ ] Error handling verified (incl. 'Not Found' / empty)
+- [ ] Tests pass locally and cover edge cases
+- [ ] No unjustified dependencies
 
 ## SDLC Pipeline
 | Stage | Artifact | Status |
@@ -105,25 +130,26 @@ gh pr create \
 | 7 Verification | verification-report.md | PASS |
 | 8 PR | This PR | OPEN |
 
-## Test Results
-- Playwright E2E: N/N passing
-- Vitest Unit: N/N passing
-- AC Coverage: N/N (100%)
-
-## Changed Files
-[list from git diff]
-
 🤖 Generated with Claude Code AI SDLC Pipeline
 EOF
 )"
 ```
 
-If `gh` is not authenticated, print the PR body to the console and instruct the user to open the PR manually.
+If `gh` is not authenticated, print the full PR body (all five sections) to the console and instruct the user to open the PR manually.
 
 ## Quality Gates
 
 - [ ] CHANGELOG.md entry uses real numbers from verification-report.md
 - [ ] sdlc-report.html contains no placeholder text
+- [ ] PR body includes all five sections: Summary, Changes Made, Test Evidence, Known Limitations, Reviewer Checklist
 - [ ] PR body includes the full pipeline status table
 - [ ] PR title follows conventional commits format: `feat:`, `fix:`, etc.
 - [ ] After completing, print: "Stage 8 complete — PR opened at [URL] | CHANGELOG and HTML report written."
+
+## References
+
+- Skill: `.claude/skills/sdlc-phase-8-pr/SKILL.md`
+- Detailed how-to: `.claude/instructions/phase-08-pr.instructions.md`
+- Report template: `.claude/templates/sdlc-report-template.html`
+- Gate rule: `.claude/instructions/gate-validation-checklist.md` → Gate 8
+- After completing, update `/memories/session/phase-08-state.md` and `/memories/session/sdlc-gate-state.md`.

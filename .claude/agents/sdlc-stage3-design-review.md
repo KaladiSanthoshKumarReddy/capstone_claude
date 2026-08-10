@@ -108,3 +108,11 @@ Write `design-review.md` to the project root:
 - [ ] Every CRITICAL finding includes: dimension, description, and suggested fix
 - [ ] FR traceability table is complete
 - [ ] After writing, print: "Stage 3 complete — verdict: [APPROVED/REJECTED]"
+
+## References
+
+- Skill: `.claude/skills/sdlc-phase-3-design-review/SKILL.md`
+- Detailed rubric: `.claude/instructions/phase-03-design-review.instructions.md`
+- Global policy: `.claude/instructions/sdlc-global.instructions.md`
+- Gate rule: `.claude/instructions/gate-validation-checklist.md` → Gate 3
+- After writing, update `/memories/session/phase-03-state.md` and `/memories/session/sdlc-gate-state.md`.

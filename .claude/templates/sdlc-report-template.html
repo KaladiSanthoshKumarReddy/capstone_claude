@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDLC Report — {{FEATURE_NAME}}</title>
+  <!--
+    Stage 8 fills every {{PLACEHOLDER}} from REAL artifacts (no fabricated values):
+    {{FEATURE_NAME}} {{TIMESTAMP}} {{FR_COUNT}} {{NFR_COUNT}} {{AC_COUNT}}
+    {{TASK_COUNT}} {{E2E_PASSED}} {{E2E_TOTAL}} {{UNIT_PASSED}} {{UNIT_TOTAL}}
+    {{AC_COVERED}} {{CRITICAL_COUNT}} {{WARNING_COUNT}} {{TEST_OUTPUT}}
+    {{DESIGN_VERDICT}} {{VERIFY_VERDICT}} {{CHANGED_FILES_ROWS}} {{ADR_ROWS}} {{COMMIT_ROWS}}
+  -->
+  <style>
+    :root{
+      --bg:#0d1117;--panel:#161b22;--line:#30363d;--text:#e6edf3;--muted:#9198a1;
+      --accent:#58a6ff;--pass:#3fb950;--fail:#f85149;--warn:#d29922;
+      --pill-pass:#132a1c;--pill-fail:#2a1414;--pill-warn:#2a2312;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:linear-gradient(120deg,#161b22,#0d1117);border-bottom:1px solid var(--line);padding:28px 32px}
+    header h1{margin:0 0 6px;font-size:24px}
+    header .meta{color:var(--muted);font-size:13px}
+    .container{max-width:1200px;margin:0 auto;padding:24px 32px}
+    section{margin:28px 0}
+    h2{font-size:18px;border-left:3px solid var(--accent);padding-left:10px;margin:0 0 14px}
+    .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+    .tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+    .tile .n{font-size:26px;font-weight:700}
+    .tile .l{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+    table{width:100%;border-collapse:collapse;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+    th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+    th{background:#1c232c;font-weight:600}
+    tr:last-child td{border-bottom:none}
+    .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600}
+    .badge.pass{background:var(--pill-pass);color:var(--pass)}
+    .badge.fail{background:var(--pill-fail);color:var(--fail)}
+    .badge.warn{background:var(--pill-warn);color:var(--warn)}
+    .code{background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:14px;white-space:pre-wrap;font-family:Consolas,monospace;font-size:12.5px;color:#c9d1d9;overflow-x:auto}
+    footer{color:var(--muted);font-size:12px;text-align:center;padding:24px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🛠️ Capstone Item Manager — SDLC Pipeline Report</h1>
+    <div class="meta">Feature: <strong>{{FEATURE_NAME}}</strong> · Generated: {{TIMESTAMP}} · Stack: React + Express + SQLite (JWT)</div>
+  </header>
+
+  <div class="container">
+    <section>
+      <h2>Summary</h2>
+      <div class="tiles">
+        <div class="tile"><div class="n">{{FR_COUNT}}</div><div class="l">Functional Reqs</div></div>
+        <div class="tile"><div class="n">{{AC_COUNT}}</div><div class="l">Acceptance Criteria</div></div>
+        <div class="tile"><div class="n">{{TASK_COUNT}}</div><div class="l">Impl Tasks</div></div>
+        <div class="tile"><div class="n">{{E2E_PASSED}}/{{E2E_TOTAL}}</div><div class="l">E2E Tests</div></div>
+        <div class="tile"><div class="n">{{UNIT_PASSED}}/{{UNIT_TOTAL}}</div><div class="l">Unit Tests</div></div>
+        <div class="tile"><div class="n">{{AC_COVERED}}</div><div class="l">AC Coverage</div></div>
+        <div class="tile"><div class="n">{{CRITICAL_COUNT}}</div><div class="l">Critical Findings</div></div>
+        <div class="tile"><div class="n">{{WARNING_COUNT}}</div><div class="l">Warnings</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>SDLC Pipeline Stages</h2>
+      <table>
+        <tr><th>#</th><th>Stage</th><th>Artifact</th><th>Gate</th></tr>
+        <tr><td>1</td><td>Requirements</td><td>requirements.md</td><td><span class="badge pass">DONE</span></td></tr>
+        <tr><td>2</td><td>Architecture</td><td>architecture.md</td><td><span class="badge pass">DONE</span></td></tr>
+        <tr><td>3</td><td>Design Review</td><td>design-review.md</td><td><span class="badge pass">{{DESIGN_VERDICT}}</span></td></tr>
+        <tr><td>4</td><td>Implementation Plan</td><td>impl-plan.md</td><td><span class="badge pass">DONE</span></td></tr>
+        <tr><td>5</td><td>Implementation</td><td>backend/ + frontend/</td><td><span class="badge pass">DONE</span></td></tr>
+        <tr><td>6</td><td>Code Review</td><td>(conversation)</td><td><span class="badge pass">PASS</span></td></tr>
+        <tr><td>7</td><td>Verification</td><td>verification-report.md</td><td><span class="badge pass">{{VERIFY_VERDICT}}</span></td></tr>
+        <tr><td>8</td><td>PR &amp; Release</td><td>CHANGELOG.md + this report</td><td><span class="badge pass">DONE</span></td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>Test Execution Results</h2>
+      <div class="code">{{TEST_OUTPUT}}</div>
+    </section>
+
+    <section>
+      <h2>Changed Files</h2>
+      <table><tr><th>File</th><th>Reason</th></tr>{{CHANGED_FILES_ROWS}}</table>
+    </section>
+
+    <section>
+      <h2>Architecture Decision Records</h2>
+      <table><tr><th>ADR</th><th>Decision</th><th>Consequence</th></tr>{{ADR_ROWS}}</table>
+    </section>
+
+    <section>
+      <h2>Commit History</h2>
+      <table><tr><th>SHA</th><th>Message</th></tr>{{COMMIT_ROWS}}</table>
+    </section>
+  </div>
+
+  <footer>🤖 Generated by the Claude Code AI SDLC Pipeline · {{TIMESTAMP}}</footer>
+</body>
+</html>
