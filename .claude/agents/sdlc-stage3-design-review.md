@@ -20,94 +20,19 @@ You are an adversarial design reviewer. Your job is to find real problems with t
 3. Read `backend/src/db/init.ts` — verify migration strategy is safe.
 4. Grep `backend/src/**/*.ts` for any patterns that violate existing conventions.
 
-## Review Dimensions
+## Execution
 
-Evaluate each dimension independently:
+Run this stage by following its operational skill end-to-end — the skill is the source of truth for
+the six review dimensions, the `design-review.md` template, verdict rules, and the gate message:
+`.claude/skills/sdlc-phase-3-design-review/SKILL.md`.
 
-### 1. FR Coverage
-- Every FR in `requirements.md` must have at least one architecture element in the traceability matrix.
-- Finding: list any uncovered FRs.
+## Guardrails
 
-### 2. API Contract Correctness
-- New endpoints must include HTTP method, path, auth requirement, request body schema, and response shape.
-- Response shape must follow `{ success: true, data }` / `{ success: false, error }`.
-- Finding: list any endpoints missing required fields.
-
-### 3. Database Safety
-- No DROP TABLE, no DROP COLUMN, no destructive migration.
-- New columns must have DEFAULT or be nullable.
-- Finding: list any unsafe migration steps.
-
-### 4. Security (OWASP Top 10)
-- Check for: injection vectors (SQL, XSS), broken auth, sensitive data exposure, missing input validation.
-- All protected routes must use `authMiddleware`.
-- Finding: list any OWASP risks not mitigated.
-
-### 5. Coding Convention Compliance
-- Auth flow preserved (JWT via authMiddleware, Zustand store).
-- DB initialization pattern preserved (additive migrations only).
-- API client pattern preserved (frontend/src/api/client.ts).
-- Finding: list any convention violations.
-
-### 6. Completeness
-- All required sections present (Sequence Diagrams, DB Changes, API Contracts, ADRs, Traceability Matrix).
-- Finding: list any missing sections.
-
-## Output
-
-Write `design-review.md` to the project root:
-
-```markdown
-# Design Review — [Feature Name]
-
-## Verdict: APPROVED | REJECTED
-
-## Review Summary
-
-| Dimension | Result | Findings |
-|-----------|--------|----------|
-| FR Coverage | PASS / FAIL | [count] uncovered FRs |
-| API Contracts | PASS / FAIL | ... |
-| Database Safety | PASS / FAIL | ... |
-| Security (OWASP) | PASS / FAIL | ... |
-| Convention Compliance | PASS / FAIL | ... |
-| Completeness | PASS / FAIL | ... |
-
-## Detailed Findings
-
-### CRITICAL (blocks APPROVED verdict)
-[List all critical findings — any one of these blocks approval]
-
-### WARNING (noted but does not block)
-[List warnings that should be addressed but do not block]
-
-### APPROVED with conditions
-[If APPROVED: list any conditions that must be met during implementation]
-
-## Traceability Verification
-| FR-ID | Covered by Architecture | Notes |
-|-------|------------------------|-------|
-
-## Security Sign-off
-[Explicit statement that each OWASP Top 10 category was evaluated]
-
-## Reviewer Notes
-[Any additional context for Stage 4 and Stage 5]
-```
-
-## Verdict Rules
-
-- **APPROVED**: All 6 dimensions pass (no CRITICAL findings). Warnings are permitted.
-- **REJECTED**: Any CRITICAL finding in any dimension → REJECTED. List all critical findings explicitly.
-- On REJECTED: the orchestrator will route back to Stage 2 with your findings as input.
-
-## Quality Gates
-
-- [ ] All 6 dimensions evaluated
-- [ ] Verdict is explicitly APPROVED or REJECTED (no ambiguity)
-- [ ] Every CRITICAL finding includes: dimension, description, and suggested fix
-- [ ] FR traceability table is complete
-- [ ] After writing, print: "Stage 3 complete — verdict: [APPROVED/REJECTED]"
+- Be adversarial: a REJECTED verdict that stops a bad design reaching implementation is a success.
+- The verdict string must literally contain `APPROVED` or `REJECTED` (gate detection depends on it).
+- Any CRITICAL finding in any dimension → REJECTED; each finding needs dimension + description + suggested fix.
+- On REJECTED, the orchestrator routes back to Stage 2 with your findings as input.
+- After writing `design-review.md`, update `/memories/session/phase-03-state.md` and `/memories/session/sdlc-gate-state.md`, then print the gate message from the skill.
 
 ## References
 

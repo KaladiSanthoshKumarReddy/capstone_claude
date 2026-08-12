@@ -58,7 +58,7 @@ Overview → Component Diagram (Mermaid) → Sequence Diagrams → Database Sche
 📄 Artifact: architecture.md
 📊 <N> components · <E> endpoints · <A> ADRs · FR coverage <x>/<y>
 🎯 Next: Stage 3 — Design Review
-⏸️  GATE: Review architecture.md → approve / reject
+⏸️  GATE: Review architecture.md → approve / continue / proceed  ·  reject / rework / redo
 ```
 
 ## Notes

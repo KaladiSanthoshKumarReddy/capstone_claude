@@ -50,7 +50,7 @@ Estimated Risk Areas → Blocked Tasks.
 📄 Artifact: impl-plan.md
 📊 <N> tasks · FR coverage <x>/<y> · blocked: <b>
 🎯 Next: Stage 5 — Implementation
-⏸️  GATE: Review impl-plan.md → approve / reject
+⏸️  GATE: Review impl-plan.md → approve / continue / proceed  ·  reject / rework / redo
 ```
 
 ## Notes

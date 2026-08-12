@@ -22,65 +22,20 @@ You are a senior full-stack developer implementing an approved, planned feature.
 4. Run `cd backend && npx tsc --noEmit 2>&1` — confirm zero errors before starting.
 5. Run `cd frontend && npx tsc --noEmit 2>&1` — confirm zero errors before starting.
 
-## Execution Protocol
+## Execution
 
-For each TASK-XX in implementation order:
-1. Read the target file(s) before editing.
-2. Apply the minimum diff needed to implement the task.
-3. After editing, run `npx tsc --noEmit` in the relevant workspace.
-4. If TypeScript errors appear, fix them before moving to the next task.
-5. Report: "TASK-XX: ✓ [short description of what was done]"
+Run this stage by following its operational skill end-to-end — the skill is the source of truth for
+the per-task execution protocol, full coding standards, gate criteria, and completion report:
+`.claude/skills/sdlc-phase-5-implementation/SKILL.md`.
+The deepest coding-standards reference lives in `.claude/instructions/phase-05-implementation.instructions.md`.
 
-## Code Standards
+## Guardrails
 
-### Backend
-- All route handlers: `async (req: AuthRequest, res: Response)` signature
-- All protected routes: add `router.use(authMiddleware)` at the top
-- All DB operations: parameterized queries via `@libsql/client`
-- Input validation: Zod schema before any DB write
-- Response shape: `{ success: true, data }` or `{ success: false, error }`
-- Error handling: return 400 for validation errors, 401 for auth, 404 for not found, 409 for conflicts
-
-### Frontend
-- New components: functional components with TypeScript props interface
-- All HTTP calls: go through `frontend/src/api/client.ts` (never raw `fetch` or `axios` directly)
-- State: Zustand stores under `frontend/src/store/`
-- Styling: Tailwind CSS utility classes only (no inline styles, no new CSS files)
-- `data-testid` attributes: required on every interactive element for Playwright tests
-
-### Database Migrations
-- Use the additive migration pattern from `backend/src/db/init.ts`:
-  ```typescript
-  const cols = await db.execute("PRAGMA table_info(tableName)")
-  const hasNewCol = cols.rows.some(r => r.name === 'new_column')
-  if (!hasNewCol) {
-    await db.execute("ALTER TABLE tableName ADD COLUMN new_column TYPE")
-    console.log('Migration: added new_column')
-  }
-  ```
-- Never DROP TABLE, DROP COLUMN, or run destructive migrations.
-
-## Absolute Prohibitions
-
-- Do NOT write any code in `tests/e2e/**` — that is Stage 7's domain.
-- Do NOT hardcode secrets, API URLs, or tokens — use `process.env.*`.
-- Do NOT add new npm dependencies without noting them explicitly.
-- Do NOT change `backend/src/middleware/auth.ts` or `frontend/src/api/client.ts` behavior unless the architecture explicitly requires it.
-- Do NOT fabricate passing test results.
-
-## Completion Report
-
-After all tasks are done, print:
-```
-Stage 5 complete — Implementation summary:
-✓ TASK-01: [description]
-✓ TASK-02: [description]
-...
-TypeScript errors: 0 (backend), 0 (frontend)
-Tasks completed: N / N
-```
-
-If any task was skipped or has issues, list them explicitly.
+- Execute `TASK-XX` in dependency order; apply the minimum diff per task and run `npx tsc --noEmit` after each (fix errors before proceeding).
+- Follow existing patterns exactly: `{ success, data/error }` responses, parameterized SQL, Zod before writes, `authMiddleware` on protected routes, all HTTP via `frontend/src/api/client.ts`, Tailwind-only, `data-testid` on interactive elements.
+- Keep DB migrations additive (never DROP); never hardcode secrets/URLs/tokens; no new npm deps without noting them.
+- Do NOT modify `tests/e2e/**` (Stage 7's domain); do NOT change `middleware/auth.ts` or `api/client.ts` behavior unless the architecture requires it; never fabricate results.
+- After finishing, update `/memories/session/phase-05-state.md` and `/memories/session/sdlc-gate-state.md`, then print the completion report and gate message from the skill.
 
 ## References
 

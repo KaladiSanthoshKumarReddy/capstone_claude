@@ -19,69 +19,20 @@ You are an implementation planner. You decompose an approved architecture design
 2. Read `architecture.md` — extract all planned changes.
 3. Read `requirements.md` — ensure every FR will be covered by at least one task.
 
-## Output
+## Execution
 
-Write `impl-plan.md` to the project root:
+Run this stage by following its operational skill end-to-end — the skill is the source of truth for
+the `impl-plan.md` template, task-granularity rules, quality gates, and the gate message:
+`.claude/skills/sdlc-phase-4-impl-plan/SKILL.md`.
 
-```markdown
-# Implementation Plan — [Feature Name]
+## Guardrails
 
-## Overview
-[What this plan implements, referencing architecture.md]
-
-## Task List
-
-### TASK-01: [Short imperative title]
-- **File(s)**: `backend/src/db/init.ts`
-- **Change type**: Modify
-- **Description**: [Exact change to make]
-- **Depends on**: none
-- **Success criteria**: [How to verify this task is complete]
-- **FR coverage**: FR-01, FR-02
-
-### TASK-02: [Short imperative title]
-- **File(s)**: `backend/src/routes/items.ts`
-- **Change type**: Modify
-- **Description**: [Exact change]
-- **Depends on**: TASK-01
-- **Success criteria**: [Verification]
-- **FR coverage**: FR-03
-
-...continue for all tasks...
-
-## Dependency Graph
-[Mermaid graph showing task dependencies]
-
-## FR → Task Traceability
-| FR-ID | Task(s) | Notes |
-|-------|---------|-------|
-
-## Implementation Order
-1. TASK-01 (no dependencies)
-2. TASK-02 (depends on TASK-01)
-...ordered by dependency chain...
-
-## Estimated Risk Areas
-| Task | Risk | Mitigation |
-|------|------|-----------|
-```
-
-## Task Granularity Rules
-
-- **One concern per task** — a task touches one file or one logical concern.
-- **Backend before frontend** — DB migrations → route handlers → API client → components → pages.
-- **No mega-tasks** — if a task would modify more than 100 lines, split it.
-- **Tests are separate** — do not include E2E test writing in implementation tasks (that is Stage 7).
-- Every task must have a clear, verifiable success criterion.
-
-## Quality Gates
-
-- [ ] Every FR from `requirements.md` is covered by at least one task
-- [ ] All tasks have explicit file targets (no vague "update the backend")
-- [ ] Dependency order is topologically valid (no circular dependencies)
-- [ ] DB migration tasks come before route tasks that depend on new columns
-- [ ] No task modifies `tests/e2e/**` — that belongs to Stage 7
-- [ ] After writing, print: "Stage 4 complete — [N] tasks planned."
+- Block if `design-review.md` verdict is not `APPROVED`: "Stage 4 blocked: design-review.md is not APPROVED."
+- Every task needs a `TASK-XX` id, explicit file target(s), dependencies, success criteria, and FR coverage.
+- One concern per task (split any task > ~100 LOC); order DB migration → routes → API client → components → pages.
+- Every FR from `requirements.md` is covered by ≥ 1 task; flag any blocked tasks with their blocker.
+- No task modifies `tests/e2e/**` — that belongs to Stage 7.
+- After writing `impl-plan.md`, update `/memories/session/phase-04-state.md` and `/memories/session/sdlc-gate-state.md`, then print the gate message from the skill.
 
 ## References
 

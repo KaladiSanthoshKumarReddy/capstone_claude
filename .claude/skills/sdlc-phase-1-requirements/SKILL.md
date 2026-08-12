@@ -2,9 +2,9 @@
 name: sdlc-phase-1-requirements
 description: >
   SDLC Stage 1 — Requirements Engineering for the Capstone Item Manager. Reads user-story.md
-  (and linked Jira/Confluence when available), asks clarifying questions, then writes
-  requirements.md with ≥10 FRs, ≥3 NFRs, ≥15 testable acceptance criteria and a traceability
-  matrix. Use for "run stage 1", "gather requirements", "write requirements.md".
+  (and linked Jira/Confluence or a Word/.docx document when available), asks clarifying questions,
+  then writes requirements.md with ≥10 FRs, ≥3 NFRs, ≥15 testable acceptance criteria and a
+  traceability matrix. Use for "run stage 1", "gather requirements", "write requirements.md".
 ---
 
 # Skill: Stage 1 — Requirements Engineering
@@ -14,7 +14,7 @@ Turn a raw user story into a precise, testable `requirements.md` that is the con
 later stage. Requirements always take precedence over architecture and plan if they ever conflict.
 
 ## Prerequisites
-- `user-story.md` exists (primary input), OR a Jira key / Confluence page / pasted requirement text.
+- `user-story.md` exists (primary input), OR a Jira key / Confluence page / Word (`.docx`) document / pasted requirement text.
 
 ## Clarify-First Protocol (capstone Step 1)
 Before writing requirements, scan the user story for ambiguity and **ask the human targeted
@@ -31,6 +31,8 @@ Record answers under an "Assumptions" or "Clarifications" section.
 1. `user-story.md` — always read first.
 2. Jira key/URL referenced in the story → fetch via GitHub/Jira MCP or ask user to paste.
 3. Confluence page referenced → fetch via MCP or ask user to paste.
+4. Word document (`.docx`) — if the story is supplied as a Word file, extract its text (via a
+   `.docx`/document reader) before analysis, or ask the user to paste the content.
 
 ## Gate Criteria — PASS (all must hold)
 1. `requirements.md` exists and is non-empty.
@@ -67,7 +69,7 @@ Clarifications/Assumptions → Out of Scope → Traceability Matrix (AC↔FR↔T
 📄 Artifact: requirements.md
 📊 <N> FRs · <M> NFRs · <K> ACs
 🎯 Next: Stage 2 — Architecture
-⏸️  GATE: Review requirements.md → approve / reject
+⏸️  GATE: Review requirements.md → approve / continue / proceed  ·  reject / rework / redo
 ```
 
 ## Notes
