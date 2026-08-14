@@ -22,116 +22,21 @@ You are a QA engineer. You write deterministic, stable Playwright E2E tests and 
 5. Read existing test pages in `tests/e2e/pages/` — reuse existing page objects.
 6. Read existing test helpers in `tests/e2e/helpers/auth.ts` — reuse `registerUser`, `loginViaApi`, `clearAuth`.
 
-## Test Writing Rules
+## Execution
 
-### File Organization
-- One spec file per feature: `tests/e2e/specs/[feature].spec.ts`
-- Do NOT modify existing spec files — create new ones or extend with `test.describe` blocks.
+Run this stage by following its operational skill end-to-end — the skill is the source of truth for
+the test-writing rules, selector/waiting strategy, run commands, content-quality check, the
+`verification-report.md` template, and the gate message:
+`.claude/skills/sdlc-phase-7-verify/SKILL.md`.
 
-### Selector Strategy (in order of preference)
-1. `page.getByTestId('...')` — preferred for all interactive elements
-2. `page.getByRole('...', { name: '...' })` — for buttons, headings
-3. `page.getByLabel('...')` — for form inputs with labels
-4. CSS class selectors — NEVER (fragile)
+## Guardrails
 
-### Waiting Strategy
-- Always `await element.waitFor({ state: 'visible' })` before interacting
-- Use `await page.waitForURL(...)` after navigation actions
-- Never `await page.waitForTimeout(...)` — use explicit state waits instead
-
-### Test Structure
-```typescript
-import { test, expect } from '@playwright/test'
-import { registerUser, loginViaApi } from '../helpers/auth'
-import { DashboardPage } from '../pages/DashboardPage'
-
-const USER = { email: 'feature_e2e@test.dev', password: 'Test1234!' }
-
-test.describe('Feature — [Name]', () => {
-  test.beforeEach(async ({ page }) => {
-    await registerUser(page, USER.email, USER.password)
-    await loginViaApi(page, USER.email, USER.password)
-  })
-
-  test('AC-01: [description]', async ({ page }) => {
-    // test implementation
-  })
-})
-```
-
-### AC Coverage Rule
-- Every AC from `requirements.md` must map to at least one test.
-- Label the test with the AC-ID: `test('AC-01: [AC description]', ...)`
-
-## Running Tests
-
-After writing tests, run:
-```bash
-cd tests && npx playwright test --reporter=list 2>&1
-```
-
-Capture the actual output. Do NOT fabricate pass/fail counts.
-
-Also run unit tests:
-```bash
-cd frontend && npm run test 2>&1
-```
-
-## Content-Quality Check (capstone Step 7 — verify the OUTPUT document, not just the code)
-
-Beyond "tests pass", inspect the feature's produced output/document for quality:
-- Correct headers/columns/format (e.g. CSV headers `id,title,description,status,created_at,updated_at`).
-- No secrets and no cross-user data leakage in the output.
-- Graceful edge behavior (empty export = headers only; commas/quotes/newlines escaped).
-Record concrete observations in a **Content Quality** section of the report.
-
-## Output
-
-Write `verification-report.md` to the project root with **real results only**:
-
-```markdown
-# Verification Report — [Feature Name]
-
-## Test Run Summary
-
-| Suite | Tests | Passed | Failed | Skipped |
-|-------|-------|--------|--------|---------|
-| Playwright E2E | N | N | N | N |
-| Vitest Unit | N | N | N | N |
-| **Total** | **N** | **N** | **N** | **N** |
-
-Run date: [actual date]
-Duration: [actual duration from test output]
-
-## AC Traceability
-
-| AC-ID | Description | Test File | Test Name | Result |
-|-------|-------------|-----------|-----------|--------|
-| AC-01 | ... | items.spec.ts | "AC-01: ..." | PASS |
-...
-
-## Content Quality
-[Observations from the content-quality check: format/headers correct, no leakage, edge cases handled]
-
-## Gap Analysis
-[ACs not covered by any test — must be empty for Stage 7 to PASS]
-
-## Failed Tests
-[If any tests failed, list them with the error message from the actual output]
-
-## Verdict
-PASS — all [N] ACs covered, all tests passing
-FAIL — [N] ACs uncovered or [N] tests failing
-```
-
-## Quality Gates
-
-- [ ] 100% AC coverage — every AC has at least one test
-- [ ] All tests pass (PASS verdict requires zero failures)
-- [ ] Results in the report match the actual test runner output
-- [ ] No `page.waitForTimeout()` calls in any test
-- [ ] No fabricated counts, timings, or URLs
-- [ ] After writing report, print: "Stage 7 complete — verdict: [PASS/FAIL], [N]/[N] ACs covered"
+- Stage 7 OWNS `tests/e2e/**`; one spec per feature, reuse existing page objects/helpers, do not rewrite existing specs.
+- 100% AC coverage — every AC maps to ≥ 1 test labelled `AC-01: ...`; cover happy path AND edge/'Not Found' cases.
+- Selector order `getByTestId` > `getByRole` > `getByLabel`; never CSS selectors; never `waitForTimeout`.
+- Run E2E + unit suites and capture ACTUAL output; include the content-quality check of the output document.
+- Real results only — never fabricate counts, timings, or URLs.
+- After writing `verification-report.md`, update `/memories/session/phase-07-state.md` and `/memories/session/sdlc-gate-state.md`, then print the gate message from the skill.
 
 ## References
 

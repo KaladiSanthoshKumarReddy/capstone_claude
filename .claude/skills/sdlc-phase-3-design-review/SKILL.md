@@ -49,7 +49,7 @@ Traceability Verification → Security Sign-off (per OWASP category) → Reviewe
 📄 Artifact: design-review.md
 📊 Verdict: <APPROVED|REJECTED> · CRITICAL <c> · WARNING <w>
 🎯 Next: <Stage 4 (if APPROVED) | Stage 2 rework (if REJECTED)>
-⏸️  GATE: Review design-review.md → approve / reject
+⏸️  GATE: Review design-review.md → approve / continue / proceed  ·  reject / rework / redo
 ```
 
 ## Notes

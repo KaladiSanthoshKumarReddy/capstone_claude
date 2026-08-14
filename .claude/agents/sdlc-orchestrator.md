@@ -23,7 +23,7 @@ Check which artifacts exist to determine the current stage:
 | `design-review.md` with "APPROVED" | Stage 3 done |
 | `impl-plan.md` exists | Stage 4 done |
 | Code changes in `backend/src/` or `frontend/src/` newer than `impl-plan.md` | Stage 5 done |
-| `verification-report.md` does NOT exist yet | Stage 6 done (review is in-memory) |
+| Stage 6 code review reported PASS (in conversation) | Stage 6 done |
 | `verification-report.md` exists with "PASS" | Stage 7 done |
 | `CHANGELOG.md` updated and `sdlc-report.html` present | Stage 8 done |
 

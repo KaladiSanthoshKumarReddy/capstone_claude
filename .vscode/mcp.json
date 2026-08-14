@@ -1,0 +1,46 @@
+{
+  "inputs": [
+    {
+      "id": "jira-token",
+      "type": "promptString",
+      "description": "Jira Personal Access Token (matches JIRA_API_TOKEN in .env)",
+      "password": true
+    },
+    {
+      "id": "confluence-token",
+      "type": "promptString",
+      "description": "Confluence Personal Access Token (matches CONFLUENCE_API_TOKEN in .env)",
+      "password": true
+    },
+    {
+      "id": "github-token",
+      "type": "promptString",
+      "description": "GitHub Personal Access Token (matches GITHUB_TOKEN in .env) - optional if using the built-in GitHub Pull Request extension auth",
+      "password": true
+    }
+  ],
+  "servers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "jira": {
+      "type": "http",
+      "url": "https://jiraeu.epam.com",
+      "headers": {
+        "Authorization": "Bearer ${input:jira-token}"
+      }
+    },
+    "confluence": {
+      "type": "http",
+      "url": "https://kb.epam.com",
+      "headers": {
+        "Authorization": "Bearer ${input:confluence-token}"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    }
+  }
+}

@@ -60,7 +60,7 @@ Test Run Summary (suite/total/pass/fail/skip + real date + duration) → AC Trac
 📄 Artifact: verification-report.md
 📊 Verdict: <PASS|FAIL> · AC coverage <x>/<y> · E2E <p>/<t> · Unit <p>/<t>
 🎯 Next: Stage 8 — PR & Release
-⏸️  GATE: Review verification-report.md → approve / reject
+⏸️  GATE: Review verification-report.md → approve / continue / proceed  ·  reject / rework / redo
 ```
 
 ## Notes
